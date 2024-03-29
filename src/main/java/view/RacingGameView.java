@@ -8,29 +8,58 @@ import java.util.stream.Collectors;
 
 public class RacingGameView {
 
-    public static final String INPUT_CAR_NAMES = "경주할 자동차 이름을 입력하세요(이름은 쉼표(,)를 기준으로 구분).";
-    public static final String INPUT_TRY_NUMS = "시도할 회수는 몇회인가요?";
-    public static final String RESULT = "실행 결과";
+    public static final String INPUT_CAR_NAMES_MSG = "경주할 자동차 이름을 입력하세요(이름은 쉼표(,)를 기준으로 구분).";
+    public static final String INPUT_TRY_NUMS_MSG = "시도할 회수는 몇회인가요?";
+    public static final String RESULT_MSG = "실행 결과";
     public static final String DISPLAY_WINNER_FMT = "%s가 최종 우승했습니다.\n";
-    public static String getCarNames() {
-        System.out.println(INPUT_CAR_NAMES);
-        return getInput();
+
+    public static String mustGetCarNames() {
+        String carNames = getCarNames();
+        while (!validateCarNames(carNames)) {
+            carNames = getCarNames();
+        }
+        return carNames;
     }
 
-    public static int getTryNums() {
-        System.out.println(INPUT_TRY_NUMS);
-        int tryNums = Integer.parseInt(getInput());
-        System.out.println();
+    private static boolean validateCarNames(String carNames) {
+        return !carNames.isEmpty();
+    }
+
+    public static String getCarNames() {
+        return getInput(INPUT_CAR_NAMES_MSG);
+    }
+
+    public static int mustGetTryNums() {
+        int tryNums = getTryNums();
+        while (!validateTryNums(tryNums)) {
+            tryNums = getTryNums();
+        }
         return tryNums;
     }
 
-    public static String getInput() {
+    private static boolean validateTryNums(int tryNums) {
+        return tryNums > 0;
+    }
+
+    public static int getTryNums() {
+        String input = getInput(INPUT_TRY_NUMS_MSG);
+        try {
+            return Integer.parseInt(input);
+        } catch (NumberFormatException e) {
+            System.out.println("[ERROR] 숫자를 입력해주세요.");
+            return -1;
+        }
+    }
+
+    public static String getInput(String msg) {
+        System.out.println(msg);
         Scanner scanner = new Scanner(System.in);
         return scanner.nextLine();
     }
 
     public static void displayResult() {
-        System.out.println(RESULT);
+        System.out.println();
+        System.out.println(RESULT_MSG);
     }
 
     public static void displayCars(List<Car> cars) {

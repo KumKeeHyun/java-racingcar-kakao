@@ -10,47 +10,17 @@ import java.util.stream.IntStream;
 
 public class RacingGameController {
 
-    private RacingGame racingGame;
-    private int tryNums;
-
     public  void startGame() {
-        setup();
-        playround(racingGame, tryNums);
-        result(racingGame);
-    }
+        String carNames = RacingGameView.mustGetCarNames();
+        int tryNums = RacingGameView.mustGetTryNums();
 
-    private void setup() {
-        String carNames = RacingGameView.getCarNames();
-        while (carNames.isEmpty()) {
-            carNames = RacingGameView.getCarNames();
-        }
-        while (true){
-            if (getTryNums()) break;
-        }
-        racingGame = new RacingGame(carNames, new RealRandomStrategy());
-    }
-
-    private boolean getTryNums() {
-        try {
-            tryNums = RacingGameView.getTryNums();
-            return true;
-        } catch (NumberFormatException e) {
-            System.out.println("숫자를 입력해주세요.");
-        }
-        return false;
-    }
-
-    private  void playround(RacingGame racingGame, int tryNums) {
+        RacingGame racingGame = new RacingGame(carNames, new RealRandomStrategy());
         RacingGameView.displayResult();
-        RacingGameView.displayCars(racingGame.getCars());
         IntStream.range(0, tryNums).forEach(i -> {
             racingGame.moveCars();
             RacingGameView.displayCars(racingGame.getCars());
         });
+        RacingGameView.displayWinners(racingGame.getWinners());
     }
 
-    private  void result(RacingGame racingGame) {
-        List<Car> winners = racingGame.getWinners();
-        RacingGameView.displayWinners(winners);
-    }
 }
