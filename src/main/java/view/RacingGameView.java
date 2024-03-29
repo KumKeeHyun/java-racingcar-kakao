@@ -4,6 +4,8 @@ import racing.Car;
 
 import java.util.List;
 import java.util.Scanner;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class RacingGameView {
@@ -14,34 +16,34 @@ public class RacingGameView {
     public static final String DISPLAY_WINNER_FMT = "%s가 최종 우승했습니다.\n";
 
     public static String mustGetCarNames() {
-        String carNames = getCarNames();
-        while (!validateCarNames(carNames)) {
-            carNames = getCarNames();
+        return retryableInput(RacingGameView::getCarNamesInput, RacingGameView::validateCarNames);
+    }
+
+    private static <T> T retryableInput(Supplier<T> supplier, Predicate<T> validator) {
+        T input = supplier.get();
+        while (!validator.test(input)) {
+            input = supplier.get();
         }
-        return carNames;
+        return input;
     }
 
     private static boolean validateCarNames(String carNames) {
         return !carNames.isEmpty();
     }
 
-    public static String getCarNames() {
+    private static String getCarNamesInput() {
         return getInput(INPUT_CAR_NAMES_MSG);
     }
 
     public static int mustGetTryNums() {
-        int tryNums = getTryNums();
-        while (!validateTryNums(tryNums)) {
-            tryNums = getTryNums();
-        }
-        return tryNums;
+        return retryableInput(RacingGameView::getTryNumsInput, RacingGameView::validateTryNums);
     }
 
     private static boolean validateTryNums(int tryNums) {
         return tryNums > 0;
     }
 
-    public static int getTryNums() {
+    private static int getTryNumsInput() {
         String input = getInput(INPUT_TRY_NUMS_MSG);
         try {
             return Integer.parseInt(input);
@@ -51,7 +53,7 @@ public class RacingGameView {
         }
     }
 
-    public static String getInput(String msg) {
+    private static String getInput(String msg) {
         System.out.println(msg);
         Scanner scanner = new Scanner(System.in);
         return scanner.nextLine();
